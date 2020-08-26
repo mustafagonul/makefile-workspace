@@ -54,7 +54,7 @@ sshpass -p "$(REMOTE_PASSWORD)" scp -P $(REMOTE_SSH_PORT) $(REMOTE_SSH_PARAMS) $
 endef
 
 define exec_ssh
-	@set -x; if $(call exec_ssh_simple, $(REMOTE_ENDPOINT) "exit"); then \
+	@if $(call exec_ssh_simple, $(REMOTE_ENDPOINT) "exit"); then \
 		echo "  Remote is available."; \
 		echo "  Executing..."; \
 		echo; \
@@ -169,10 +169,10 @@ $(PROJECT_TARGET): $(C_OBJS) $(CPP_OBJS)
 	@source $(SETUP_SCRIPT); set -x; $$CXX -o $@ $^ $$LDFLAGS $(LDFLAGS) $(LDLIBS)
 
 $(PROJECT_BUILD_DIR)/%.c_o: %.c
-	@source $(SETUP_SCRIPT); set -x; $$CC -c $< -o $@ $$CFLAGS $(CFLAGS) $(DEFAULT_COMPILE_FLAGS)
+	@source $(SETUP_SCRIPT); set -x; $$CC  -c $< -o $@ $$CFLAGS $(CFLAGS) $(DEFAULT_COMPILE_FLAGS)
 
 $(PROJECT_BUILD_DIR)/%.cpp_o: %.cpp
-	@source $(SETUP_SCRIPT); $(PREPARE_CXX); $$CXX -c $< -o $@ $$CXXFLAGS $(CXX_FLAGS) $(DEFAULT_COMPILE_FLAGS)
+	@source $(SETUP_SCRIPT); set -x; $$CXX -c $< -o $@ $$CXXFLAGS $(CXX_FLAGS) $(DEFAULT_COMPILE_FLAGS)
 
 $(PROJECT_BUILD_DIR):
 	@mkdir -p $(PROJECT_BUILD_DIR)
