@@ -18,6 +18,4 @@ CXXFLAGS :=
 LDFLAGS :=
 LDLIBS :=
 
-# TODO: update the directory
-
-include ../../project.mk
+include ../makefile-workspace/project.mk

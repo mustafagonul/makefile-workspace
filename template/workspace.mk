@@ -1,3 +1,1 @@
-# TODO: update the directory
-
-include ../workspace.mk
+include ./makefile-workspace/workspace.mk
