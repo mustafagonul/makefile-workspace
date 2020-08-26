@@ -1,0 +1,5 @@
+# Build directory
+*/build
+
+# Coredump file
+*/core

@@ -1,0 +1,6 @@
+.vscode
+.history
+
+# Examples
+examples/*/build
+examples/*/core
