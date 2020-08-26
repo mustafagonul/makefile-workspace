@@ -26,10 +26,13 @@ TOOLCHAIN_PREFIX:=arm-linux-gnueabi-
 CC:=gcc
 CXX:=g++
 LD=:ld
-CPPFLAGS:=
-CXXFLAGS:=
-LDFLAGS:=
-LDLIBS:=
+
+## Flags
+# Should not override the parameters
+CFLAGS +=
+CXXFLAGS +=
+LDFLAGS +=
+LDLIBS +=
 
 ## GDB Debugger
 GDB:=gdb-multiarch
