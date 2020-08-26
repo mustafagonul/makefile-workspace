@@ -215,6 +215,7 @@ target_prepare:
 # Setting core file pattern
 	@echo "Setting core file pattern."
 	$(call exec_ssh, 'exec $$SHELL --login -c "sysctl -w kernel.core_pattern=$(PROJECT_COREDUMP) > /dev/null 2>&1"')
+	@echo "Setting core uses pid."
 	$(call exec_ssh, 'exec $$SHELL --login -c "sysctl -w kernel.core_uses_pid=0 > /dev/null 2>&1"')
 
 
@@ -246,6 +247,7 @@ pre_run:
 	$(call print_header, "Running $(PROJECT_NAME) ...")
 
 target_run:
+	@echo "Accessing target."
 	$(call exec_ssh, 'cd $(REMOTE_DIR); exec $$SHELL --login -c "ulimit -c unlimited; ./$(PROJECT_NAME) 2>&1 || true"')
 	@echo
 
