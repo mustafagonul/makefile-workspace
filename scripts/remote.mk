@@ -20,5 +20,5 @@ include $(BUILD_TOOL_CONFIG_DIR)/remote.mk
 
 
 ## Other / Derived
-REMOTE_ENDPOINT = ${REMOTE_USER}@${REMOTE_IP}
-REMOTE_SSH_PARAMS = -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+REMOTE_ENDPOINT := ${REMOTE_USER}@${REMOTE_IP}
+REMOTE_SSH_PARAMS := -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null

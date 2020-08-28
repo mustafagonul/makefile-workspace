@@ -39,7 +39,7 @@ CPP_SRCS := $(shell find -name *.cpp)
 C_OBJS := $(C_SRCS:./%.c=./$(PROJECT_BUILD_DIR)/%.c_o)
 CPP_OBJS := $(CPP_SRCS:./%.cpp=./$(PROJECT_BUILD_DIR)/%.cpp_o)
 
-DEFAULT_COMPILE_FLAGS := -g3 -O0
+DEFAULT_COMPILE_FLAGS := -g3 -O0 -I.
 
 
 ###############################################################################
@@ -166,13 +166,13 @@ post_compile:
 compile: setup pre_compile $(PROJECT_BUILD_DIR) $(PROJECT_TARGET) post_compile
 
 $(PROJECT_TARGET): $(C_OBJS) $(CPP_OBJS)
-	@source $(SETUP_SCRIPT); set -x; $$CXX -o $@ $^ $$LDFLAGS $(LDFLAGS) $(LDLIBS)
+	@source $(SCRIPT_SETUP); set -x; $$CXX -o $@ $^ $$LDFLAGS $(LDFLAGS) $(LDLIBS)
 
 $(PROJECT_BUILD_DIR)/%.c_o: %.c
-	@source $(SETUP_SCRIPT); set -x; $$CC  -c $< -o $@ $$CFLAGS $(CFLAGS) $(DEFAULT_COMPILE_FLAGS)
+	@source $(SCRIPT_SETUP); set -x; $$CC  -c $< -o $@ $$CFLAGS $(CFLAGS) $(DEFAULT_COMPILE_FLAGS)
 
 $(PROJECT_BUILD_DIR)/%.cpp_o: %.cpp
-	@source $(SETUP_SCRIPT); set -x; $$CXX -c $< -o $@ $$CXXFLAGS $(CXX_FLAGS) $(DEFAULT_COMPILE_FLAGS)
+	@source $(SCRIPT_SETUP); set -x; $$CXX -c $< -o $@ $$CXXFLAGS $(CXX_FLAGS) $(DEFAULT_COMPILE_FLAGS)
 
 $(PROJECT_BUILD_DIR):
 	@mkdir -p $(PROJECT_BUILD_DIR)
@@ -195,23 +195,9 @@ target_prepare:
 # Copying executable
 	@echo "Copying executable."
 	$(call exec_scp, $(PROJECT_TARGET)   $(REMOTE_ENDPOINT):$(REMOTE_DIR))
-# Copying files
-# If the example has its own files, code copies these and pass all of them once to the application
-# 	@echo "Copying files."
-# 	@if [ -d ./files/ ]; then \
-# 		echo; \
-# 	  scp -r ./files/           $(ENDPOINT):$(DIR); \
-# 		scp ../common/run-all.sh  $(ENDPOINT):$(DIR)/run.sh; \
-# 	elif [ -d ../files/ ]; then \
-#     scp -r ../files/          $(ENDPOINT):$(DIR); \
-#     scp ../common/run-each.sh $(ENDPOINT):$(DIR)/run.sh; \
-#   else \
-# 	  scp ../common/run-once.sh $(ENDPOINT):$(DIR)/run.sh; \
-# 	fi
-# # Copying run script
-# 	@echo "Copying run script."
-# 	@if [ -f ./run.sh ]; then \
-# 	  scp ./run.sh
+# Copying run script
+	@echo "Copying run script."
+	$(call exec_scp, $(SCRIPT_RUN)   $(REMOTE_ENDPOINT):$(REMOTE_DIR))
 # Setting core file pattern
 	@echo "Setting core file pattern."
 	$(call exec_ssh, 'exec $$SHELL --login -c "sysctl -w kernel.core_pattern=$(PROJECT_COREDUMP) > /dev/null 2>&1"')
@@ -248,7 +234,7 @@ pre_run:
 
 target_run:
 	@echo "Accessing target."
-	$(call exec_ssh, 'cd $(REMOTE_DIR); exec $$SHELL --login -c "ulimit -c unlimited; ./$(PROJECT_NAME) 2>&1 || true"')
+	$(call exec_ssh, 'cd $(REMOTE_DIR); exec $$SHELL --login -c "ulimit -c unlimited; ./$(SCRIPT_RUN_NAME) 2>&1 || true"')
 	@echo
 
 post_run: check_coredump
@@ -268,7 +254,7 @@ target_debug_coredump:
 	@if [ -f $(PROJECT_COREDUMP) ] ; then \
 		echo "Coredump file found." ; \
 		echo ; \
-		source $(SETUP_SCRIPT) ; \
+		source $(SCRIPT_SETUP) ; \
 		$(GDB) $(PROJECT_TARGET) -c $(PROJECT_COREDUMP) -n -x $(PROJECT_GDBINIT) ; \
 	else \
 		echo "No coredump file found." ; \
@@ -289,7 +275,7 @@ target_debug:
 	@echo Starting gdbserver on $(REMOTE_IP):$(GDB_PORT)...
 	$(call exec_ssh_simple, -t $(REMOTE_ENDPOINT) 'cd $(REMOTE_DIR); exec $$SHELL --login -c "gdbserver :$(GDB_PORT) ./$(PROJECT_NAME)"' &)
 	@echo Starting the gdb remote session
-	@source $(SETUP_SCRIPT) ; $(GDB) $(PROJECT_TARGET) -ex 'target remote $(REMOTE_IP):$(GDB_PORT)' -ex 'b main' -ex 'continue'
+	@source $(SCRIPT_SETUP); $(GDB) $(PROJECT_TARGET) -ex 'target remote $(REMOTE_IP):$(GDB_PORT)' -ex 'b main' -ex 'continue'
 
 debug: prepare pre_debug target_debug
 

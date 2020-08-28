@@ -16,5 +16,5 @@ endif
 
 
 include $(BUILD_TOOL_SELF_DIR)/scripts/remote.mk
-include $(BUILD_TOOL_SELF_DIR)/scripts/setup.mk
+include $(BUILD_TOOL_SELF_DIR)/scripts/script.mk
 include $(BUILD_TOOL_SELF_DIR)/scripts/toolchain.mk

@@ -18,4 +18,6 @@ endif
 include $(BUILD_TOOL_SELF_DIR)/scripts/current.mk
 
 
-SETUP_SCRIPT = $(BUILD_TOOL_CONFIG_DIR)/setup.sh
+SCRIPT_SETUP := $(BUILD_TOOL_CONFIG_DIR)/setup.sh
+SCRIPT_RUN_NAME := run.sh
+SCRIPT_RUN := $(BUILD_TOOL_CONFIG_DIR)/$(SCRIPT_RUN_NAME)

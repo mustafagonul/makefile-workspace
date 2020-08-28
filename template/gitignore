@@ -1,5 +1,6 @@
-# Build directory
+# Projects
 */build
-
-# Coredump file
 */core
+
+# Report
+report.txt
