@@ -67,16 +67,22 @@ define exec_ssh
 endef
 
 define exec_scp
-	@if $(call exec_ssh_simple, $(REMOTE_ENDPOINT) "exit"); then \
-		echo "  Remote is available."; \
-		echo "  Copying..." ;\
-		echo; \
-		$(call exec_scp_simple, $(1)) ; \
-	else \
-		echo "  Remote is unavailable!"; \
-		echo "  Cannot copy!"; \
-		echo; \
-	fi
+	@for CURRENT_FILE in $(1); do \
+		echo "  Current File: $$CURRENT_FILE"; \
+		if [ ! -f $$CURRENT_FILE ]; then \
+			echo "  No file to copy!"; \
+			echo; \
+		elif $(call exec_ssh_simple, $(REMOTE_ENDPOINT) "exit"); then \
+			echo "  Remote is available."; \
+			echo "  Copying..." ;\
+			echo; \
+			$(call exec_scp_simple, $(1) $(2)) ; \
+		else \
+			echo "  Remote is unavailable!"; \
+			echo "  Cannot copy!"; \
+			echo; \
+		fi \
+	done
 endef
 
 
@@ -187,17 +193,20 @@ post_prepare:
 	$(call print_tail, "Preparing done!")
 
 target_prepare:
-# Preparation for copying
+# Preparation for copying / Creating files and the project directory with the same command
 	@echo "Removing $(PROJECT_NAME) directory from target."
 	$(call exec_ssh, "[ -d $(REMOTE_DIR) ] && rm -Rf $(REMOTE_DIR) || true")
 	@echo "Creating empty $(PROJECT_NAME) directory."
-	$(call exec_ssh, "mkdir -p $(REMOTE_DIR)")
+	$(call exec_ssh, "mkdir -p $(REMOTE_DIR)/$(SCRIPT_FILES_DIR_NAME)")
 # Copying executable
 	@echo "Copying executable."
-	$(call exec_scp, $(PROJECT_TARGET)   $(REMOTE_ENDPOINT):$(REMOTE_DIR))
+	$(call exec_scp, $(PROJECT_TARGET), $(REMOTE_ENDPOINT):$(REMOTE_DIR))
 # Copying run script
 	@echo "Copying run script."
-	$(call exec_scp, $(SCRIPT_RUN)   $(REMOTE_ENDPOINT):$(REMOTE_DIR))
+	$(call exec_scp, $(SCRIPT_RUN),     $(REMOTE_ENDPOINT):$(REMOTE_DIR))
+# Copying files
+	@echo "Copying files."
+	$(call exec_scp, $(SCRIPT_FILES),   $(REMOTE_ENDPOINT):$(REMOTE_DIR)/$(SCRIPT_FILES_DIR_NAME))
 # Setting core file pattern
 	@echo "Setting core file pattern."
 	$(call exec_ssh, 'exec $$SHELL --login -c "sysctl -w kernel.core_pattern=$(PROJECT_COREDUMP) > /dev/null 2>&1"')
