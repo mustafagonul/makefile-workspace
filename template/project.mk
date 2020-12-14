@@ -13,9 +13,15 @@
 # LOADLIBES is a deprecated (but still supported) alternative to LDLIBS.
 # Non-library linker flags, such as -L, should go in the LDFLAGS variable.
 
+
+EXTRA_OBJS :=
+EXCLUDE_C_SRC :=
+EXCLUDE_CPP_SRC :=
+
 CFLAGS :=
 CXXFLAGS :=
 LDFLAGS :=
 LDLIBS :=
+
 
 include ../makefile-workspace/project.mk

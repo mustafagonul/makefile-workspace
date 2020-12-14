@@ -10,6 +10,24 @@ TOOLCHAIN_PREFIX:=
 # LD
 # Program for linking.
 #
+# CUSTOM_CC
+# If you want to customize the building for C files, you can use CUSTOM_CC variable.
+#
+# CUSTOM_CXX
+# If you want to customize the building for C++ files, you can use CUSTOM_CXX variable.
+#
+# CUSTOM_LD
+# If you want to customize the building for binaries, you can use CUSTOM_LD variable.
+#
+# EXTRA_OBJS
+# Extra object files to link the target
+#
+# EXCLUDE_C_SRC
+# The file needed to be excluded from build
+#
+# EXCLUDE_CPP_SRC
+# The file needed to be excluded from build
+#
 # CFLAGS
 # Extra flags to give to the C compiler.
 #
@@ -29,6 +47,16 @@ TOOLCHAIN_PREFIX:=
 CC  := gcc
 CXX := g++
 LD  := ld
+
+## Custom Building
+CUSTOM_CC =
+CUSTOM_CXX =
+CUSTOM_LD =
+
+## Extra objects and excluded files
+EXTRA_OBJS +=
+EXCLUDE_C_SRC +=
+EXCLUDE_CPP_SRC +=
 
 ## Flags
 # Should not override the parameters

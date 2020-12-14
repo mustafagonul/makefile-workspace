@@ -34,8 +34,8 @@ PROJECT_TARGET := $(PROJECT_BUILD_DIR)/$(PROJECT_NAME)
 REMOTE_DIR := /home/$(REMOTE_USER)/$(PROJECT_NAME)
 
 # Toolchain
-C_SRCS := $(shell find -name *.c)
-CPP_SRCS := $(shell find -name *.cpp)
+C_SRCS := $(shell find -type f -name "*.c" ! -name "$(EXCLUDE_C_SRC)")
+CPP_SRCS := $(shell find -type f -name "*.cpp" ! -name "$(EXCLUDE_CPP_SRC)")
 C_OBJS := $(C_SRCS:./%.c=./$(PROJECT_BUILD_DIR)/%.c_o)
 CPP_OBJS := $(CPP_SRCS:./%.cpp=./$(PROJECT_BUILD_DIR)/%.cpp_o)
 
@@ -141,6 +141,9 @@ environment:
 	@echo "CC =                         $(CC)"
 	@echo "CXX =                        $(CXX)"
 	@echo "LD =                         $(LD)"
+	@echo "CUSTOM_CC =                  $(CUSTOM_CC)"
+	@echo "CUSTOM_CXX =                 $(CUSTOM_CXX)"
+	@echo "CUSTOM_LD =                  $(CUSTOM_LD)"
 	@echo "CFLAGS =                     $(CFLAGS)"
 	@echo "CXXFLAGS =                   $(CXXFLAGS)"
 	@echo "DEFAULT_COMPILE_FLAGS =      $(DEFAULT_COMPILE_FLAGS)"
@@ -152,10 +155,13 @@ environment:
 	@echo
 	@echo "Project Files"
 	@echo "-------------"
+	@echo "EXCLUDE_C_SRC =              $(EXCLUDE_C_SRC)"
+	@echo "EXCLUDE_CPP_SRC =            $(EXCLUDE_CPP_SRC)"
 	@echo "C_SRCS =                     $(C_SRCS)"
 	@echo "CPP_SRCS =                   $(CPP_SRCS)"
 	@echo "C_OBJS =                     $(C_OBJS)"
 	@echo "CPP_OBJS =                   $(CPP_OBJS)"
+	@echo "EXTRA_OBJS =                 $(EXTRA_OBJS)"
 	@echo "================================================================================================="
 	@echo
 
@@ -171,14 +177,26 @@ post_compile:
 
 compile: setup pre_compile $(PROJECT_BUILD_DIR) $(PROJECT_TARGET) post_compile
 
-$(PROJECT_TARGET): $(C_OBJS) $(CPP_OBJS)
-	@source $(SCRIPT_SETUP); set -x; $$CXX -o $@ $^ $$LDFLAGS $(LDFLAGS) $(LDLIBS)
+$(PROJECT_TARGET): $(C_OBJS) $(CPP_OBJS) $(EXTRA_OBJS)
+ifeq ($(strip $(CUSTOM_LD)),)
+	@source $(SCRIPT_SETUP); set -x; $$LD -o $@ $^ $$LDFLAGS $(LDFLAGS) $(LDLIBS)
+else
+	@source $(SCRIPT_SETUP); set -x; $(call CUSTOM_LD,$@,$^)
+endif
 
 $(PROJECT_BUILD_DIR)/%.c_o: %.c
+ifeq ($(strip $(CUSTOM_C)),)
 	@source $(SCRIPT_SETUP); set -x; $$CC  -c $< -o $@ $$CFLAGS $(CFLAGS) $(DEFAULT_COMPILE_FLAGS)
+else
+	@source $(SCRIPT_SETUP); set -x; $(call CUSTOM_CC,$@,$<)
+endif
 
 $(PROJECT_BUILD_DIR)/%.cpp_o: %.cpp
+ifeq ($(strip $(CUSTOM_CXX)),)
 	@source $(SCRIPT_SETUP); set -x; $$CXX -c $< -o $@ $$CXXFLAGS $(CXX_FLAGS) $(DEFAULT_COMPILE_FLAGS)
+else
+	@source $(SCRIPT_SETUP); set -x; $(call CUSTOM_CXX,$@,$<)
+endif
 
 $(PROJECT_BUILD_DIR):
 	@mkdir -p $(PROJECT_BUILD_DIR)
