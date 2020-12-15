@@ -1,6 +1,6 @@
-## Toolchain
-TOOLCHAIN_PREFIX:=
-
+# TOOLCHAIN_PREFIX
+# Toolchain prefix needed for the compiler and linker.
+#
 # CC
 # Program for compiling C programs.
 #
@@ -42,6 +42,9 @@ TOOLCHAIN_PREFIX:=
 # Library flags or names given to compilers when they are supposed to invoke the linker, ‘ld’.
 # LOADLIBES is a deprecated (but still supported) alternative to LDLIBS.
 # Non-library linker flags, such as -L, should go in the LDFLAGS variable.
+
+## Toolchain
+TOOLCHAIN_PREFIX:=
 
 ## Compiler
 CC  := gcc

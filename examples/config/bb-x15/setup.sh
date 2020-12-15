@@ -1,7 +1,5 @@
 #!/bin/bash
 
-### Raspberry Pi
-
 ### Beagleboard X15
 
 ## Version

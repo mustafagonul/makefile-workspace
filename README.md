@@ -15,4 +15,46 @@
 
 ## How to use?
 
+### Copying
+
+The project should be cloned into the main project as a subdirectory. You can clone the project with the command:
+
+```bash
+$ git clone git@github.com:mustafagonul/makefile-workspace.git
+```
+
+or
+
+```bash
+$ git clone https://github.com/mustafagonul/makefile-workspace.git
+```
+
+If your main project is git project, you can keep the `makefile-workspace` project as a submodule. You can add the project to your main project as a submodule with the command:
+
+```bash
+git submodule add https://github.com/mustafagonul/makefile-workspace.git makefile-workspace
+```
+
+or
+
+```bash
+git submodule add git@github.com:mustafagonul/makefile-workspace.git makefile-workspace
+```
+
+### Configuration
+
+#### Remote
+
+#### Toolchain Scripts
+
+##### toolchain.mk
+
+##### setup.sh
+
+#### Workspace
+
+#### Project
+
+#### Application (run.sh)
+
 ## TODO
