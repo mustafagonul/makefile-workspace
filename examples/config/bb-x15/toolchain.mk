@@ -22,6 +22,9 @@
 # EXTRA_OBJS
 # Extra object files to link the target
 #
+# EXTRA_FILES_TO_CLEAN
+# Intermediate files created during the build process. These files should be removed while cleaning.
+#
 # EXCLUDE_C_SRC
 # The file needed to be excluded from build
 #
@@ -56,8 +59,9 @@ CUSTOM_CC =
 CUSTOM_CXX =
 CUSTOM_LD =
 
-## Extra objects and excluded files
+## Extra files, objects and excluded files
 EXTRA_OBJS +=
+EXTRA_FILES_TO_CLEAN +=
 EXCLUDE_C_SRC +=
 EXCLUDE_CPP_SRC +=
 

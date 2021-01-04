@@ -39,7 +39,7 @@ CPP_SRCS := $(shell find -type f -name "*.cpp" ! -name "$(EXCLUDE_CPP_SRC)")
 C_OBJS := $(C_SRCS:./%.c=./$(PROJECT_BUILD_DIR)/%.c_o)
 CPP_OBJS := $(CPP_SRCS:./%.cpp=./$(PROJECT_BUILD_DIR)/%.cpp_o)
 
-DEFAULT_COMPILE_FLAGS := -g3 -O0 -I.
+DEFAULT_COMPILE_FLAGS := -I.
 
 
 ###############################################################################
@@ -162,6 +162,7 @@ environment:
 	@echo "C_OBJS =                     $(C_OBJS)"
 	@echo "CPP_OBJS =                   $(CPP_OBJS)"
 	@echo "EXTRA_OBJS =                 $(EXTRA_OBJS)"
+	@echo "EXTRA_FILES_TO_CLEAN =       $(EXTRA_FILES_TO_CLEAN)"
 	@echo "================================================================================================="
 	@echo
 
@@ -193,7 +194,7 @@ endif
 
 $(PROJECT_BUILD_DIR)/%.cpp_o: %.cpp
 ifeq ($(strip $(CUSTOM_CXX)),)
-	@source $(SCRIPT_SETUP); set -x; $$CXX -c $< -o $@ $$CXXFLAGS $(CXX_FLAGS) $(DEFAULT_COMPILE_FLAGS)
+	@source $(SCRIPT_SETUP); set -x; $$CXX -c $< -o $@ $$CXXFLAGS $(CXXFLAGS) $(DEFAULT_COMPILE_FLAGS)
 else
 	@source $(SCRIPT_SETUP); set -x; $(call CUSTOM_CXX,$@,$<)
 endif
@@ -321,6 +322,8 @@ target_clean:
 	@rm -Rf $(PROJECT_BUILD_DIR)
 	@echo "Removing coredump file if exists."
 	@rm -Rf $(PROJECT_COREDUMP)
+	@echo "Removing extra files if exists."
+	@rm -Rf $(EXTRA_FILES_TO_CLEAN)
 	@echo "Removing $(PROJECT_NAME) directory from target."
 	$(call exec_ssh, '[ -d $(REMOTE_DIR) ] && rm -Rf $(REMOTE_DIR) || true')
 	@echo
